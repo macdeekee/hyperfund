@@ -1,0 +1,31 @@
+{
+  "name": "hyperfund",
+  "version": "1.0.0",
+  "description": "Terminal dashboard for Hyperliquid fundamentals.",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "src/cli.js",
+  "bin": {
+    "hyperfund": "bin/hyperfund.js"
+  },
+  "scripts": {
+    "start": "node bin/hyperfund.js",
+    "check": "node bin/hyperfund.js --help",
+    "snapshot": "node bin/hyperfund.js snapshot",
+    "trend": "node bin/hyperfund.js trend",
+    "history": "node bin/hyperfund.js history",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "axios": "^1.17.0",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^15.0.0",
+    "ora": "^9.4.0"
+  }
+}
