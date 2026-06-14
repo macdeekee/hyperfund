@@ -1,6 +1,7 @@
 import { Command, Option } from 'commander';
 import ora from 'ora';
 import { createConfig } from './config.js';
+import { buildAnalysisForSnapshot } from './services/analysisPlatform.js';
 import { createHyperfundServices } from './services/hyperfundService.js';
 import { buildTrendReport } from './services/trendService.js';
 import { renderDashboard } from './ui/dashboard.js';
@@ -69,6 +70,7 @@ async function showDashboard(options) {
 
   const snapshot = await withSpinner('Fetching HyperFund live dashboard', options.json, () => hyperfund.fetchSnapshot());
   const saved = await snapshots.saveDaily(snapshot);
+  saved.snapshot.analysis = await buildAnalysisForSnapshot(saved.snapshot);
 
   if (options.json) {
     printJson(saved.snapshot);
@@ -84,6 +86,7 @@ async function createSnapshot(options) {
 
   const snapshot = await withSpinner('Fetching HyperFund snapshot', options.json, () => hyperfund.fetchSnapshot());
   const result = options.save === false ? { snapshot, file: null } : await snapshots.saveDaily(snapshot);
+  result.snapshot.analysis = await buildAnalysisForSnapshot(result.snapshot);
 
   if (options.json) {
     printJson(result.snapshot);

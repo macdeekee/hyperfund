@@ -1,7 +1,7 @@
 {
   "name": "hyperfund",
   "version": "1.0.0",
-  "description": "Terminal dashboard for Hyperliquid fundamentals.",
+  "description": "Hyperliquid fundamentals dashboard, forecast model, and terminal CLI.",
   "license": "ISC",
   "author": "",
   "type": "module",
@@ -10,22 +10,46 @@
     "hyperfund": "bin/hyperfund.js"
   },
   "scripts": {
-    "start": "node bin/hyperfund.js",
+    "dev": "next dev --hostname 127.0.0.1 --port 3000",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "cli": "node bin/hyperfund.js",
     "check": "node bin/hyperfund.js --help",
     "snapshot": "node bin/hyperfund.js snapshot",
     "trend": "node bin/hyperfund.js trend",
     "history": "node bin/hyperfund.js history",
-    "test": "node --test"
+    "test": "node --test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "asciichart": "^1.5.25",
     "axios": "^1.17.0",
+    "better-sqlite3": "^12.10.0",
     "boxen": "^8.0.1",
     "chalk": "^5.6.2",
     "cli-table3": "^0.6.5",
     "commander": "^15.0.0",
-    "ora": "^9.4.0"
+    "date-fns": "^4.4.0",
+    "dotenv": "^17.4.2",
+    "lucide-react": "^1.18.0",
+    "next": "^16.2.9",
+    "ora": "^9.4.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "prisma": "^7.8.0",
+    "typescript": "^6.0.3"
   }
 }

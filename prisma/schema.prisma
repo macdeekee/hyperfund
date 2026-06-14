@@ -1,0 +1,116 @@
+// SQLite is the initial local datastore. To move to Postgres later, change the
+// provider to "postgresql", set DATABASE_URL to a Postgres connection string,
+// and run a new migration.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Snapshot {
+  id                 String              @id @default(cuid())
+  date               String              @unique
+  capturedAt         DateTime
+  savedAt            DateTime            @default(now())
+  schemaVersion      Int
+  sourceStatus       Json
+  formulas           Json
+  raw                Json
+  metrics            MetricSnapshot?
+  scoreComponents    ScoreComponent[]
+  valuationScenarios ValuationScenario[]
+  forecast           Forecast?
+
+  @@index([capturedAt])
+}
+
+model MetricSnapshot {
+  id                       String   @id @default(cuid())
+  snapshotId               String   @unique
+  price                    Float?
+  marketCap                Float?
+  annualizedRevenue        Float?
+  revenue24h               Float?
+  revenue7d                Float?
+  revenue30d               Float?
+  fees24h                  Float?
+  buybacks24h              Float?
+  buybacksAnnualized       Float?
+  stablecoinMarketCap      Float?
+  aqav2DailyRevenue        Float?
+  aqav2AnnualizedRevenue   Float?
+  totalOpenInterestUsd     Float?
+  totalPerpVolume24h       Float?
+  hypeOpenInterestUsd      Float?
+  hypePerpVolume24h        Float?
+  tvl                      Float?
+  activePerpMarkets        Int?
+  revenueMultiple          Float?
+  buybackYield             Float?
+  stablecoinToMarketCap    Float?
+  volumeToMarketCap        Float?
+  weightedScore            Float?
+  scoreRating              String?
+  snapshot                 Snapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@index([weightedScore])
+}
+
+model ScoreComponent {
+  id         String   @id @default(cuid())
+  snapshotId String
+  name       String
+  weight     Float
+  score      Float
+  snapshot   Snapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@index([snapshotId])
+}
+
+model ValuationScenario {
+  id               String   @id @default(cuid())
+  snapshotId       String
+  multiple         Float
+  impliedMarketCap Float?
+  impliedPrice     Float?
+  upside           Float?
+  snapshot         Snapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@index([snapshotId])
+}
+
+model Forecast {
+  id                String           @id @default(cuid())
+  snapshotId        String           @unique
+  currentPrice      Float?
+  fairBear          Float?
+  fairBase          Float?
+  fairBull          Float?
+  bearUpside        Float?
+  baseUpside        Float?
+  bullUpside        Float?
+  signal            String
+  confidence        String
+  confidenceScore   Float
+  assumptions       Json
+  createdAt         DateTime         @default(now())
+  snapshot          Snapshot         @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  drivers           ForecastDriver[]
+}
+
+model ForecastDriver {
+  id         String   @id @default(cuid())
+  forecastId String
+  label      String
+  direction  String
+  impact     Float
+  value      Float?
+  detail     String
+  forecast   Forecast @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+
+  @@index([forecastId])
+}
